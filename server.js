@@ -1,5 +1,5 @@
 /*
-CSC3916 HW2
+CSC3916 HW3
 File: Server.js
 Description: Web API scaffolding for Movie API
  */
@@ -86,41 +86,81 @@ router.post('/signin', function (req, res) {
     })
 });
 router.route('/movies')
-    .delete(authController.isAuthenticated, function(req, res) {
-        var movie = new Movie();
-        movie.Title = req.body.Title;
-        movie.Year = req.body.Year;
-        movie.Genre = req.body.Genre;
-        movie.Actors = req.body.Actors;
-        Movie.remove({Title: movie.Title}).exec(function(err,movie){
-            if (err){
-                res.send(err);
-            }
-            res.json({success: true, msg: 'Successfully deleted.'})
-        })
+    .delete(authJwtController.isAuthenticated, function(req, res) {
+        if (req.body.Title){
+            res.json({success: false, msg: 'Please include Title for deletion.'});
+        }
+        else{
+            Movie.findOne({Title: req.body.Title}).exec(function(err,result){
+                if(result !== null){
+                    Movie.remove({Title: req.body.Title}).exec(function(err){
+                        if (err)
+                            res.json({success: false, msg: "Could not find movie: "+ req.body.Title+ ""});
+                        else
+                            res.json({success: true, msg:'Movie deleted.'});
+                    })
+                }
+            });
+        }
     })
 
     .put(authJwtController.isAuthenticated, function(req, res) {
-        var movie = new Movie();
-        movie.Title = req.body.Title;
-        movie.Year = req.body.Year;
-        movie.Genre = req.body.Genre;
-        movie.Actors = req.body.Actors;
-        }
-    )
-    .post(function(req, res){
-        var movie = new Movie();
-        movie.Title = req.body.Title;
-        movie.Year = req.body.Year;
-        movie.Genre = req.body.Genre;
-        movie.Actors = req.body.Actors;
+        var id = req.headers.id;
+        Movie.findOne({_id: id}).exec(function(err, movie){
+            if (err)
+                res.send(err);
+            movie.Title = req.body.Title;
+            movie.Year = req.body.Year;
+            movie.Genre = req.body.Genre;
+            movie.Actors = req.body.Actors;
+            movie.save(function(err){
+                if (err){
+                    if(err.code ==11000){
+                        return res.json({success: false, msg: 'The movie is already exist.'});
+                    }
+                    else
+                        return res.send(err);
+                }
+                res.json({message: 'Movie is updated.'});
+            });
+        });
+
     })
-    .get(function(req, res){
-        var movie = new Movie();
-        movie.Title = req.body.Title;
-        movie.Year = req.body.Year;
-        movie.Genre = req.body.Genre;
-        movie.Actors = req.body.Actors;
+    .post(authJwtController.isAuthenticated, function(req, res){
+        if (!req.body.Title || !req.body.Year|| !req.body.Genre|| !req.body.Actors && req.body.Actors.length) {
+            res.json({success: false, msg: 'Please include Title, Year, Genre,Actors (there should be at least 3 actors).'});
+        }else{
+            if (req.body.Actors.length<3){
+                res.json({success: false, msg: 'Please provide at least 3 actors.'})
+            }
+            else{
+                var movie = new Movie();
+                movie.Title = req.body.Title;
+                movie.Year = req.body.Year;
+                movie.Genre = req.body.Genre;
+                movie.Actors = req.body.Actors;
+                movie.save(function (err){
+                    if (err){
+                        if (err.code == 11000)
+                            return res.json({success: false, msg: 'The movie is already exist.'});
+                        else
+                            return res.send(err);
+                    }
+                    res.json({message: 'Movie is created.'});
+                });
+            }
+        }
+
+
+    })
+    .get(authJwtController.isAuthenticated, function(req, res){
+        if(true){
+            Movie.find({}, function(err, movies){
+                if(err)
+                    res.send(err);
+                res.json({Movie: movies});
+            })
+        }
     });
 
 app.use('/', router);
