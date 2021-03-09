@@ -12,12 +12,12 @@ try {
     console.log("could not connect");
 }
 mongoose1.set('useCreateIndex', true);
-var Movie = new Schema({
+var MovieSchema = new Schema({
     Title: {type:String, required: true},
     Year: { type: String, required: true},
     Genre: { type: String, required: true, enum:['Action', 'Adventure',  'Comedy',  'Drama',  'Fantasy',  'Horror',  'Mystery',  'Thriller', 'Western'] },
-    Actor: {type: Array, required: true}
+    Actors : { type : Array,ActorName:{type:String},CharacterName:{type:String} }
 });
 
 //return the model to server
-module.exports = mongoose1.model('Movie');
+module.exports = mongoose1.model('Movie',MovieSchema);

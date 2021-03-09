@@ -12,7 +12,7 @@ var authJwtController = require('./auth_jwt');
 var jwt = require('jsonwebtoken');
 var cors = require('cors');
 var User = require('./Users');
-
+var Movie = require('./movies')
 var app = express();
 app.use(cors());
 app.use(bodyParser.json());
@@ -86,44 +86,40 @@ router.post('/signin', function (req, res) {
 });
 router.route('/movies')
     .delete(authController.isAuthenticated, function(req, res) {
-            console.log(req.body);
-            res = res.status(200);
-            if (req.get('Content-Type')) {
-                res = res.type(req.get('Content-Type'));
+        var movie = new Movie();
+        movie.Title = req.body.Title;
+        movie.Year = req.body.Year;
+        movie.Genre = req.body.Genre;
+        movie.Actors = req.body.Actors;
+        Movie.remove({Title: movie.Title}).exec(function(err,movie){
+            if (err){
+                res.send(err);
             }
-            var o = getJSONObjectForMovieRequirement(req);
-            res.json(o);
-        }
-    )
+            res.json({success: true, msg: 'Successfully deleted.'})
+        })
+    })
+
     .put(authJwtController.isAuthenticated, function(req, res) {
-            console.log(req.body);
-            res = res.status(200);
-            if (req.get('Content-Type')) {
-                res = res.type(req.get('Content-Type'));
-            }
-            var o = getJSONObjectForMovieRequirement(req);
-            res.json(o);
+        var movie = new Movie();
+        movie.Title = req.body.Title;
+        movie.Year = req.body.Year;
+        movie.Genre = req.body.Genre;
+        movie.Actors = req.body.Actors;
         }
     )
     .post(function(req, res){
-        console.log(req.body);
-        res = res.status(200);
-        if (req.get('Content-Type')) {
-            res = res.type(req.get('Content-Type'));
-        }
-        //res.json ({msg:'movie saved'});
-        var o = getJSONObjectForMovieRequirement(req);
-        res.json(o);
+        var movie = new Movie();
+        movie.Title = req.body.Title;
+        movie.Year = req.body.Year;
+        movie.Genre = req.body.Genre;
+        movie.Actors = req.body.Actors;
     })
     .get(function(req, res){
-        console.log(req.body);
-        res = res.status(200);
-        if (req.get('Content-Type')) {
-            res = res.type(req.get('Content-Type'));
-        }
-        //res.json ({msg:'GET movies'});
-        var o = getJSONObjectForMovieRequirement(req);
-        res.json(o);
+        var movie = new Movie();
+        movie.Title = req.body.Title;
+        movie.Year = req.body.Year;
+        movie.Genre = req.body.Genre;
+        movie.Actors = req.body.Actors;
     });
 
 app.use('/', router);
