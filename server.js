@@ -88,7 +88,7 @@ router.post('/signin', function (req, res) {
 router.route('/movies')
     .delete(authJwtController.isAuthenticated, function(req, res) {
         if (req.body.Title){
-            res.json({success: false, msg: 'Please include Title for deletion.'});
+            res.json({success: false, msg: 'Please include Title for deletion.' +req.body.Title});
         }
         else{
             Movie.findOne({Title: req.body.Title}).exec(function(err,result){
