@@ -105,8 +105,8 @@ router.route('/movies')
     })
 
     .put(authJwtController.isAuthenticated, function(req, res) {
-        var Title = req.body.Title;
-        Movie.findOne({Title: Title}).exec(function(err,movie){
+        var id = req.headers.id;
+        Movie.findOne({_id: id}).exec(function(err, movie){
             if (err)
                 res.send(err);
             movie.Title = req.body.Title;
@@ -121,7 +121,7 @@ router.route('/movies')
                     else
                         return res.send(err);
                 }
-                res.json({message: 'Movie is updated.'+ id});
+                res.json({message: 'Movie is updated.'});
             });
         });
 
