@@ -105,14 +105,16 @@ router.route('/movies')
     })
 
     .put(authJwtController.isAuthenticated, function(req, res) {
-        var id = req.headers.id;
-        Movie.findOne({_id: id}).exec(function(err, movie){
+      //  var id = req.headers.id;
+        var movie = new Movie();
+        movie.Title = req.body.Title;
+        movie.Year = req.body.Year;
+        movie.Genre = req.body.Genre;
+        movie.Actors = req.body.Actors;
+        Movie.findOne({Title: Title}).exec(function(err){
             if (err)
                 res.send(err);
-            movie.Title = req.body.Title;
-            movie.Year = req.body.Year;
-            movie.Genre = req.body.Genre;
-            movie.Actors = req.body.Actors;
+
             movie.save(function(err){
                 if (err){
                     if(err.code ==11000){
