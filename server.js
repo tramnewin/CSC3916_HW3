@@ -111,7 +111,8 @@ router.route('/movies')
         movie.Year = req.body.Year;
         movie.Genre = req.body.Genre;
         movie.Actors = req.body.Actors;
-        var id = movie.id;
+        var id = db.movie.findOne({Title:movie.Title});
+        res.json({msg:id});
         Movie.findOne({_id: id}).exec(function(err){
             if (err)
                 res.send(err);
