@@ -124,7 +124,7 @@ router.route('/movies')
                     else
                         return res.send(err);
                 }
-                res.json({message: 'Movie is updated.'});
+                res.json({message: 'Movie is updated.'+ id});
             });
         });
 
