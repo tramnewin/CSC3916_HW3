@@ -38,7 +38,7 @@ describe('Register, Login and Call Test Collection with Basic Auth and JWT Auth'
                 .end((err, res) =>{
                     console.log(JSON.stringify(res.body));
                     res.should.have.status(200);
-                    res.body.success.should.be.eql(true);
+                    res.body.success.should.be.equal(true);
                     //follow-up to get the JWT token
                     chai.request(server)
                         .post('/signin')
